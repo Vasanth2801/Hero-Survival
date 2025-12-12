@@ -42,9 +42,10 @@ public class PlayerMovement : MonoBehaviour
 
         if(hitInfo)
         {
-            EnemyAI enemy = hitInfo.transform.GetComponent<EnemyAI>();
+            EnemyHealth enemy = hitInfo.transform.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
+                enemy.TakeDamage(10);
                 Debug.Log("Attacked Enemy");
             }
 
