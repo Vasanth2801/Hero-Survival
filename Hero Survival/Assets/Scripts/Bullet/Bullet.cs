@@ -2,35 +2,16 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [Header("Bullet Settings")]
-    [SerializeField] float speed = 7f;
-    Rigidbody2D rb;
+    [SerializeField] Transform target;
+    [SerializeField] float speed;
+    Rigidbody2D bulletRb;
 
-    [Header("Bullet Timings")]
-    [SerializeField] float lifeOfBullet = 4f;
-    float timer;
-
-    void Awake()
+    void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-    }
-
-    private void OnEnable()
-    {
-        timer = lifeOfBullet;
-        if(rb != null)
-        {
-            rb.linearVelocity = transform.up * speed;
-        }
-    }
-
-
-    private void Update()
-    {
-        timer -= Time.deltaTime;
-        if(timer <= 0)
-        {
-            gameObject.SetActive(false);
-        }
+        bulletRb = GetComponent<Rigidbody2D>();
+        target = GameObject.FindGameObjectWithTag("Player").transform;
+        Vector2 moveDir = (target.position - transform.position).normalized * speed;
+        bulletRb.linearVelocity = new Vector2(moveDir.x, moveDir.y);
+        Destroy(this.gameObject, 2f);
     }
 }
