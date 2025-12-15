@@ -14,27 +14,33 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("References")]
     [SerializeField] Rigidbody2D rb;
-    float x;
-    float y;
-
+    [SerializeField] Camera cam;
+    Vector2 mousePos;
+    Vector2 movement;
+    
     private void Update()
     {
-        x = Input.GetAxisRaw("Horizontal");
-        y = Input.GetAxisRaw("Vertical");
+        movement.x = Input.GetAxisRaw("Horizontal");
+        movement.y = Input.GetAxisRaw("Vertical");
 
         if(Input.GetMouseButtonDown(0))
         {
             StartCoroutine(Shoot());
         }
+
+        mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+
         
     }
 
     private void FixedUpdate()
     {
-        Vector2 move = rb.position + new Vector2(x * speed, y * speed) * Time.deltaTime;
+        Vector2 move = rb.position + movement * speed * Time.deltaTime;
         rb.MovePosition(move);
-    }
 
+        MouseLook();
+
+    }
 
     IEnumerator Shoot()
     {
@@ -63,5 +69,12 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         lineRenderer.enabled = false;
+    }
+
+    void MouseLook()
+    {
+        Vector2 lookDir = mousePos - rb.position;
+        float angle = Mathf.Atan2(lookDir.y, lookDir.x)*Mathf.Rad2Deg -90f;
+        rb.rotation = angle;
     }
 }

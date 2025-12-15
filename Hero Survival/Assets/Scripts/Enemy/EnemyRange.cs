@@ -6,9 +6,11 @@ public class EnemyRange : MonoBehaviour
     [SerializeField] float speed = 2f;
     [SerializeField] float lineOfSite = 5f;
     [SerializeField] float shootingRange;
+    [Header("References")]
     [SerializeField] GameObject bulletPrefab;
     [SerializeField] GameObject firePoint;
     [SerializeField] Transform player;
+    [Header("Shooting Settings")]
     [SerializeField] float fireRate = 1f;
     [SerializeField] float nextFireRate;
 

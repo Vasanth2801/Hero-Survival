@@ -20,7 +20,6 @@ public class RangedEnemy : MonoBehaviour
     [SerializeField] float timeToFire = 1f;
     [SerializeField] float nextFireRate;
 
-
     [Header("References for the gun")]
     [SerializeField] Transform firePoint;
     [SerializeField] GameObject bulletPrefab;
@@ -78,7 +77,7 @@ public class RangedEnemy : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(Vector2.Distance(transform.position,player.position) <= distanceToStop)
+        if(Vector2.Distance(transform.position,player.position) >= distanceToStop)
         {
             rb.linearVelocity = transform.up * enemySpeed * Time.deltaTime;
         }
