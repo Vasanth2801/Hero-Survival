@@ -5,6 +5,8 @@ public class EnemyAI : MonoBehaviour
     [Header("EnemySettings")]
     [SerializeField] float enemySpeed = 3f;
     [SerializeField] Transform player;
+    [SerializeField] PlayerHealth health;
+    [SerializeField] float damage = 5f;
 
     private void Start()
     {
@@ -12,6 +14,7 @@ public class EnemyAI : MonoBehaviour
         {
             player = GameObject.FindGameObjectWithTag("Player").transform;
         }
+        health = FindObjectOfType<PlayerHealth>();
     }
 
     private void Update()
@@ -25,6 +28,11 @@ public class EnemyAI : MonoBehaviour
         {
             Destroy(this.gameObject);
             Debug.Log("Destroyed");
+        }
+
+        if(other.gameObject.CompareTag("Player"))
+        {
+            health.TakeDamage(damage);
         }
     }
 }

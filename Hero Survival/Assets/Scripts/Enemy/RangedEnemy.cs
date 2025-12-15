@@ -2,88 +2,80 @@ using UnityEngine;
 
 public class RangedEnemy : MonoBehaviour
 {
-    [Header("Enemy Settings")]
-    [SerializeField] float enemySpeed = 5f;
-    [SerializeField] Transform player;
-    [SerializeField] float rotationSpeed = 0.0025f;
+    [Header("Chasing settings")]
+    public float enemySpeed = 5f;    
+    public Transform target;          
+    public float rotationSpeed = 0.0025f;   
 
     [Header("References")]
-    Rigidbody2D rb;
+    private Rigidbody2D rb;    
 
-    [Header("Distance for the Enemy to detect")]
-    [SerializeField] float distanceToStop = 5f;
-    [SerializeField] float distanceToShoot = 2f;
+    [Header("Distance for the enemy to shoot")]
+    public float distanceToShoot = 5f;   
+    public float distanceToStop = 2f;   
 
-    [Header("Firing Rate for the enemy")]
-    [SerializeField] float fireRate;
-    [SerializeField] float timer = 0;
-    [SerializeField] float timeToFire = 1f;
-    [SerializeField] float nextFireRate;
+    [Header("Firing rate for the enemy")]
+    public float fireRate = 1;
+    public float timer = 0;
 
-    [Header("References for the gun")]
-    [SerializeField] Transform firePoint;
-    [SerializeField] GameObject bulletPrefab;
+    [Header("References for bullet and firepoint")]
+    public Transform firePoint;   
+    public GameObject BulletPrefab; 
 
-
-    private void Awake()
+    void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        timer = fireRate;
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        rb = GetComponent<Rigidbody2D>();       
+        timer = fireRate;  
+        target = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     private void Update()
     {
-        if(player == null)
-        {
-            GetTarget();
-        }
-        else
+        if (target != null)
         {
             RotateTowardsTarget();
-        }
+        }       
+        
 
-        if(Vector2.Distance(transform.position, player.position) <= distanceToShoot)
+        if (Vector2.Distance(transform.position, target.position) <= distanceToShoot)
         {
             Shoot();
         }
     }
 
-    void GetTarget()
-    {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-    }
-
-    void RotateTowardsTarget()
-    {
-        Vector2 direction = player.position - transform.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
-        Quaternion q = Quaternion.Euler(0,0,angle);
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, q, rotationSpeed);
-    }
-
     void Shoot()
     {
-        if(timer < 0 && nextFireRate < Time.time)
+        if (timer < Time.time)
         {
-            Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            nextFireRate = Time.time + timeToFire;
+            Instantiate(BulletPrefab, firePoint.position, firePoint.rotation); 
+            timer = fireRate + Time.time;       
         }
         else
         {
-            timer -= Time.deltaTime;
+            timer -= Time.deltaTime;  
         }
     }
 
     void FixedUpdate()
     {
-        if(Vector2.Distance(transform.position,player.position) >= distanceToStop)
+        if (Vector2.Distance(transform.position, target.position) >= distanceToShoot)
         {
-            rb.linearVelocity = transform.up * enemySpeed * Time.deltaTime;
+            rb.linearVelocity = transform.up * enemySpeed * Time.fixedDeltaTime;       
         }
         else
         {
-            rb.linearVelocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;      
         }
+
+    }
+
+   
+
+    void RotateTowardsTarget()
+    {
+        Vector2 direction = target.position - transform.position;   
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f; 
+        Quaternion q = Quaternion.Euler(new Vector3(0, 0, angle));            
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, q, rotationSpeed);  
     }
 }

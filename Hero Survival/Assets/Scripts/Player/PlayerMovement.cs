@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
@@ -28,9 +27,7 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(Shoot());
         }
 
-        mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-
-        
+        mousePos = cam.ScreenToWorldPoint(Input.mousePosition); 
     }
 
     private void FixedUpdate()
@@ -39,7 +36,6 @@ public class PlayerMovement : MonoBehaviour
         rb.MovePosition(move);
 
         MouseLook();
-
     }
 
     IEnumerator Shoot()
@@ -65,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         lineRenderer.enabled = true;
+        lineRenderer.sortingOrder = 13;
 
         yield return new WaitForSeconds(duration);
 
