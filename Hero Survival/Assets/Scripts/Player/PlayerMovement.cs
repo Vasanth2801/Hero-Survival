@@ -8,15 +8,18 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Shooting Settings")]
     [SerializeField] Transform firePoint;
-    [SerializeField] LineRenderer lineRenderer;
-    [SerializeField] float duration = 0.02f;
-
+    [SerializeField] ObjectPooler pooler;
     [Header("References")]
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Camera cam;
     Vector2 mousePos;
     Vector2 movement;
-    
+
+    void Start()
+    {
+        pooler = FindObjectOfType<ObjectPooler>();
+    }
+
     private void Update()
     {
         movement.x = Input.GetAxisRaw("Horizontal");
@@ -24,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetMouseButtonDown(0))
         {
-            StartCoroutine(Shoot());
+            Shoot();
         }
 
         mousePos = cam.ScreenToWorldPoint(Input.mousePosition); 
@@ -38,34 +41,9 @@ public class PlayerMovement : MonoBehaviour
         MouseLook();
     }
 
-    IEnumerator Shoot()
+    void Shoot()
     {
-        RaycastHit2D hitInfo = Physics2D.Raycast(firePoint.position, firePoint.up);
-
-        if(hitInfo)
-        {
-            EnemyHealth enemy = hitInfo.transform.GetComponent<EnemyHealth>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(10);
-                Debug.Log("Attacked Enemy");
-            }
-
-            lineRenderer.SetPosition(0,firePoint.position);
-            lineRenderer.SetPosition(1, hitInfo.point);
-        }
-        else
-        {
-            lineRenderer.SetPosition(0, firePoint.position);
-            lineRenderer.SetPosition(1, firePoint.position + transform.up * 100f);
-        }
-
-        lineRenderer.enabled = true;
-        lineRenderer.sortingOrder = 13;
-
-        yield return new WaitForSeconds(duration);
-
-        lineRenderer.enabled = false;
+        pooler.SpawnObjects("Bullet",firePoint.position,firePoint.rotation);
     }
 
     void MouseLook()
